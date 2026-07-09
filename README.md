@@ -69,6 +69,6 @@ PylonInsight is **not** intended to:
 
 Its purpose is exclusively to analyze exported diagnostic data.
 
-## This project is in its early stages. The data model and file formats may evolve until version 1.0. Feedback, sample datasets, and contributions are very welcome.
+**This project is in its early stages. The data model and file formats may evolve until version 1.0. Feedback, sample datasets, and contributions are very welcome.**
 
 
