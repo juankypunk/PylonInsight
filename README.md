@@ -28,9 +28,11 @@ PylonInsight complements BatteryView by transforming exported data into a struct
 🚧 Early development
 
 Current milestone:
+
 - Reverse engineering BatteryView export formats
 
 Planned milestones:
+
 - Generic parser
 - PostgreSQL data model
 - Incremental importer
