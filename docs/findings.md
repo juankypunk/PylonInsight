@@ -1,4 +1,4 @@
-| Status           | Means                                                         |
+| Status           | Meaning                                                        |
 | ----------------- | --------------------------------------------------------------------- |
 | ✅ **Confirmed**   | Verified experimentally using one or more acquisition campaigns.      |
 | 🟡 **Likely**     | Strong evidence exists, but additional validation is still desirable. |
