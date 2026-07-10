@@ -51,9 +51,9 @@ The BMS stores its history in a fixed-size FIFO circular buffer.
 
 **Evidence**
 
-Older records disappear while newer records are appended.
+- Older records disappear while newer records are appended.
 
-The exported file always contains the most recent history.
+- The exported file always contains the most recent history.
 
 **Confidence**
 
