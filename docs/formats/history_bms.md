@@ -127,6 +127,13 @@ A parser should:
 
 # Database Recommendations
 
+The timestamp consists of two consecutive columns:
+
+*Date
+*Time
+
+and the parser must reconstruct a single timestamp.
+
 For incremental imports, the timestamp should be used as the primary candidate key.
 
 Example:
