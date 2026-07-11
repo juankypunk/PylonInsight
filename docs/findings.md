@@ -16,8 +16,7 @@
 The SC0500A BMS stores one history record every 1800 seconds (30 minutes).
 
 **Evidence**
-- history.csv header contains:
-- Save,data,every,1800,S
+- history.csv header contains: 'Save,data,every,1800,S'
 - Consecutive timestamps are separated by approximately 30 minutes.
 
 **Confidence**
@@ -52,9 +51,9 @@ The BMS stores its history in a fixed-size FIFO circular buffer.
 
 **Evidence**
 
-Older records disappear while newer records are appended.
+- Older records disappear while newer records are appended.
 
-The exported file always contains the most recent history.
+- The exported file always contains the most recent history.
 
 **Confidence**
 
