@@ -4,18 +4,24 @@
 
 This document describes the `history.csv` file exported by **BatteryView 3.9.4** for the second-generation Pylontech XHB BMU boards.
 
-Validated hardware:
-
-* Device name: `XHB_BMU_NT`
-* Board version: `V30R02C002`
-* Main software: `B52.5.0`
-* Software version: `V1.2`
 
 Field semantics are documented separately in:
 
 ```text
 docs/data_dictionary/history_xhb_bmu_fields.md
 ```
+
+---
+
+## Supported Device
+
+The format described in this document has been validated using the following hardware:
+
+* Device name: `XHB_BMU_NT`
+* Board version: `V30R02C002`
+* Main software: `B52.5.0`
+* Software version: `V1.2`
+
 
 ---
 

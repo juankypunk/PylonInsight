@@ -8,6 +8,16 @@ The purpose of this document is to define the file structure and format independ
 
 ---
 
+## Supported device
+
+The format described in this document has been validated using the following hardware:
+* SC0500A 
+* Device name     : CMU_A
+* Board version   : TISP01V10R02_1
+* Main software   : B52.36.0
+* Software version: V5.7
+
+
 # File Structure
 
 A BMS history export consists of four sections:
@@ -129,8 +139,8 @@ A parser should:
 
 The timestamp consists of two consecutive columns:
 
-*Date
-*Time
+* Date
+* Time
 
 and the parser must reconstruct a single timestamp.
 
@@ -151,6 +161,14 @@ INSERT ... ON CONFLICT DO NOTHING
 depending on the database design.
 
 ---
+
+
+## Example: 
+
+docs/examples/SC0500A_history.csv
+
+# Related findings: 
+
 
 # Related Documentation
 

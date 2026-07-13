@@ -4,18 +4,21 @@
 
 This document describes the `history.csv` file exported by **BatteryView 3.9.4** for the first-generation Pylontech BMU boards.
 
-Validated hardware:
-
-* Device name: `bmu`
-* Board version: `HP0115SV10R01`
-* Main software: `B52.2.0`
-* Software version: `V3.2`
 
 Field semantics are documented separately in:
 
 ```text
 docs/data_dictionary/history_bmu_fields.md
 ```
+
+## Supported Device
+
+The format described in this document has been validated using the following hardware:
+
+* Device name: `bmu`
+* Board version: `HP0115SV10R01`
+* Main software: `B52.2.0`
+* Software version: `V3.2`
 
 ---
 
