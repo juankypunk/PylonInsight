@@ -232,3 +232,21 @@ The database should distinguish between:
 - Dynamic measurements
 
 This avoids unnecessary duplication while preserving firmware evolution over time.
+
+## F-012 — Advertised sampling interval may differ from effective sampling interval ##
+
+**Status:** 🟡 Likely
+
+**Finding**
+
+The sampling interval declared in the CSV header (Save,data,every,1800,S) does not necessarily match the effective interval between consecutive history records.
+
+**Evidence**
+
+* SC0500A BMS: advertised 1800 s, observed ≈1800 s.
+* Legacy BMU: advertised 1800 s, observed ≈1800 s (según tus observaciones anteriores).
+* XHB BMU: advertised 1800 s, observed ≈420 s (≈7 min), based on timestamp analysis.
+
+**Implications**
+
+Software must derive the effective sampling interval from the timestamps instead of assuming the value declared in the header.
