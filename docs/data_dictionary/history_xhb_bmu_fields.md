@@ -7,7 +7,8 @@ This document describes the fields found in the `history.csv` files exported by 
 | CSV Column | Canonical Name                        | Type     | Unit | Description                                                                                 | Confidence    |
 | ---------- | ------------------------------------- | -------- | ---- | ------------------------------------------------------------------------------------------- | ------------- |
 | Item       | `record_index`                        | Integer  | -    | Sequential row number inside the exported history buffer. Not persistent between exports.   | ✅ Confirmed   |
-| Time       | `timestamp`                           | DateTime | -    | Timestamp of the historical record. Natural identifier for incremental imports.             | ✅ Confirmed   |
+| Date       | `record_date`                         | Date | YY-MM-DD    | Date portion of the timestamp.             | ✅ Confirmed   |
+| Time       | `record_time`                           | Time | HH:MM:SS    | Timestamp of the historical record. Natural identifier for incremental imports.             | ✅ Confirmed   |
 | Vo(mV)     | `module_voltage`                      | Integer  | mV   | Total voltage of the battery module.                                                        | ✅ Confirmed   |
 | Tmpr       | `module_temperature`                  | Integer  | ?    | Temperature-related value. Exact meaning under investigation.                               | 🔵 Hypothesis |
 | BTlow      | `battery_temperature_low`             | Integer  | ?    | Lower battery temperature value or threshold.                                               | 🔵 Hypothesis |
@@ -32,9 +33,12 @@ This document describes the fields found in the `history.csv` files exported by 
 
 ## Notes
 
-* The timestamp is the recommended primary key for incremental imports.
-* `Item` is only a positional index.
-* Voltage values are stored in millivolts.
-* The sampling interval declared in the CSV header (1800 s) does not match the observed interval between consecutive records.
-* Fan-related fields are always zero on the analysed H48050 hardware and may be intended for other products using the same firmware family.
-* Several temperature-related fields require further validation.
+- The natural identifier of a history record is the reconstructed timestamp (`Date` + `Time`).
+- The parser should combine the `Date` and `Time` columns into a single `timestamp` value.
+- The timestamp is the recommended primary key for incremental imports.
+- `Item` is only a positional index within the history buffer and must not be used as a persistent identifier.
+- Voltage values are stored in millivolts.
+- The sampling interval declared in the CSV header (1800 s) does not match the observed interval between consecutive records.
+- Fan-related fields are always zero on the analysed H48050 hardware and may be intended for other products using the same firmware family.
+- Several temperature-related fields require further validation.
+

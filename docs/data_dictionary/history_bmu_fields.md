@@ -7,7 +7,8 @@ This document describes the fields found in the `history.csv` files exported by 
 | CSV Column | Canonical Name       | Type     | Unit | Description                                                                                                                      | Confidence    |
 | ---------- | -------------------- | -------- | ---- | -------------------------------------------------------------------------------------------------------------------------------- | ------------- |
 | Item       | `record_index`       | Integer  | -    | Sequential row number inside the exported history buffer. Not persistent between exports and must not be used as a database key. | ✅ Confirmed   |
-| Time       | `timestamp`          | DateTime | -    | Timestamp of the historical record. Natural identifier for incremental imports.                                                  | ✅ Confirmed   |
+| Date       | `record_date`        | Date | -    | Date portion of the timestamp.             | ✅ Confirmed   |
+| Time       | `record_time`          | DateTime | -    | Timestamp of the historical record. Natural identifier for incremental imports.                                                  | ✅ Confirmed   |
 | Vo(mV)     | `module_voltage`     | Integer  | mV   | Total voltage of the battery module.                                                                                             | ✅ Confirmed   |
 | Tempr      | `module_temperature` | Integer  | ?    | Temperature-related value. Exact meaning under investigation.                                                                    | 🔵 Hypothesis |
 | Tlow       | `temperature_low`    | Integer  | ?    | Lower temperature value or threshold.                                                                                            | 🔵 Hypothesis |
@@ -23,8 +24,10 @@ This document describes the fields found in the `history.csv` files exported by 
 
 ## Notes
 
-* The timestamp is the recommended primary key for incremental imports.
-* `Item` is only a positional index.
-* Voltage fields are stored in millivolts.
-* Temperature scaling remains under investigation.
-* The exact semantics of event fields have not yet been determined.
+- The natural identifier of a history record is the reconstructed timestamp (`Date` + `Time`).
+- The parser should combine the `Date` and `Time` columns into a single `timestamp` value.
+- The timestamp is the recommended primary key for incremental imports.
+- `Item` is only a positional index within the history buffer and must not be used as a persistent identifier.
+- Voltage fields are stored in millivolts.
+- Temperature scaling remains under investigation.
+- The exact semantics of event fields have not yet been determined.
