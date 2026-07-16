@@ -42,6 +42,16 @@ The file is encoded as CSV using comma-separated values.
 
 ---
 
+## File Encoding
+
+| File | Encoding |
+|------|----------|
+| history.csv | (to be determined) |
+| history.txt | UTF-16LE |
+| history_detailed.txt | UTF-16LE |
+
+---
+
 # Header
 
 Example:

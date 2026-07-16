@@ -39,6 +39,15 @@ When reporting an issue, please include as much information as possible:
 - Steps to reproduce
 - Relevant log files
 
+
+| Level          | Meaning                                                                 |
+| -------------- | ----------------------------------------------------------------------- |
+| **Confirmed**  | Verified experimentally from multiple datasets or official information. |
+| **Likely**     | Strongly supported by observations but not yet fully proven.            |
+| **Hypothesis** | Engineering inference requiring further validation.                     |
+| **Unknown**    | Field identified but semantics currently unknown.                       |
+
+
 ## Sharing BatteryView Campaigns
 
 BatteryView exports are extremely valuable for improving PylonInsight.

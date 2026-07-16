@@ -17,6 +17,7 @@ The format described in this document has been validated using the following har
 * Main software   : B52.36.0
 * Software version: V5.7
 
+---
 
 # File Structure
 
@@ -35,6 +36,16 @@ A BMS history export consists of four sections:
 ```
 
 The file is encoded as CSV using comma-separated values.
+---
+
+## File Encoding
+
+| File | Encoding |
+|------|----------|
+| history.csv | (to be determined) |
+| history.txt | UTF-16LE |
+| history_detailed.txt | UTF-16LE |
+
 
 ---
 
