@@ -173,3 +173,6 @@ Planned future modules include:
 * Machine learning based anomaly detection
 * Multi-installation comparison
 * Plugin system
+
+
+**BatteryView exports are considered an external data source, not the internal data model.**
