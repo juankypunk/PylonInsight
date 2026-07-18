@@ -32,13 +32,12 @@ The database stores a canonical representation of BatteryView exports rather tha
                                           |
                                           | N
                                +----------v-----------+
-                               |   campaign_device    |
+                               |   campaign_export    |
                                +----------------------+
                                | PK id               |
                                | FK campaign_id      |
                                | FK device_id        |
                                | role               |
-                               | device_address     |
                                | export_timestamp   |
                                | history_present    |
                                | events_present     |
