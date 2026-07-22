@@ -340,3 +340,5 @@ number_of_fields(record) = number_of_columns(header) + 1
 
 and insert the missing Date column before parsing.
 
+
+## F-015 The same device identification metadata is embedded in multiple BatteryView export files (history, history_detailed, event and event_detailed). This redundancy can be used by importers to validate export consistency.

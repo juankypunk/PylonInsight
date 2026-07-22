@@ -67,10 +67,10 @@ The database stores a canonical representation of BatteryView exports rather tha
       +----------v-----------+
       |   device_snapshot    |
       +----------------------+
-      | PK id               |
+      | PK id               |  
       | FK device_id        |
       | FK campaign_id      |
-      | board_version       |
+      | board_version  (1)  |
       | main_soft_version   |
       | soft_version        |
       | boot_version        |
@@ -97,6 +97,7 @@ The database stores a canonical representation of BatteryView exports rather tha
 | ...            |  | ...             |        | ...                |
 +----------------+  +-----------------+        +--------------------+
 ```
+(1) A device snapshot is reconstructed from the identification metadata embedded in BatteryView export files, rather than from a dedicated information file.
 
 ---
 
