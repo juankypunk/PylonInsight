@@ -113,6 +113,9 @@ The database stores normalized information rather than raw BatteryView files.
 
 The original exports remain available for auditing purposes.
 
+* history_bms contains system-level telemetry.
+* history_bmu and history_xhb_bmu contains module-level telemetry.
+
 ---
 
 ## Analysis Engine
