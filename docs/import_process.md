@@ -24,6 +24,18 @@ The importer must:
 
 ---
 
+## Design Principles
+
+The importer intentionally separates three independent stages:
+
+1. Parsing BatteryView files.
+2. Building the internal PylonInsight data model.
+3. Persisting data into PostgreSQL.
+
+This separation simplifies testing, improves maintainability and allows future support for additional battery management systems without modifying the database layer.
+
+---
+
 ## Expected campaign structure
 
 A campaign directory contains one subdirectory per device.
@@ -192,3 +204,4 @@ Future versions of the importer may include:
 - import statistics;
 - parallel processing;
 - command line filtering by device or dataset.
+
