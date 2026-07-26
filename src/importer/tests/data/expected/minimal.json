@@ -1,0 +1,7 @@
+{
+  "devices": 2,
+  "history_bms": 5,
+  "history_bmu": 5,
+  "events_bms": 3,
+  "events_bmu": 3
+}
