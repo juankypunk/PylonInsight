@@ -1,5 +1,1 @@
-Future 
-* connections
-* repositories
-* persistence 
-lives here.
+Future connections, repositories, persistence live here.
