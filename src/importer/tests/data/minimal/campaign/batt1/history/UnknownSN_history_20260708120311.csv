@@ -1,0 +1,12 @@
+﻿datalist,history,0
+@
+Save,data,every,1800,S
+Item,Time,Vo(mV),Tmpr,BTlow,BThigh,BVlow,BVhigh,PT.Tmpr,NT.Tmpr,Ref.Vol,Fan.Pwm,Fan1.Rpm,Fan2.Rpm,Base.St,Volt.St,Tmpr.St,PT.Tmpr.St,NT.Tmpr.St,Err.Code,Events
+0,26-06-29,06:18:46,49078,34000,30000,31000,3271,3272,0,0,3002,0,0,0,Idle,Normal,Normal,Normal,Normal,0x0,
+1,26-06-29,06:26:16,49077,34000,30000,31000,3271,3272,0,0,3002,0,0,0,Idle,Normal,Normal,Normal,Normal,0x0,
+2,26-06-29,06:33:46,49074,34000,30000,31000,3271,3272,0,0,3002,0,0,0,Idle,Normal,Normal,Normal,Normal,0x0,
+3,26-06-29,06:41:16,49074,34000,30000,31000,3271,3272,0,0,3002,0,0,0,Idle,Normal,Normal,Normal,Normal,0x0,
+4,26-06-29,06:48:46,49037,34000,30000,30000,3269,3270,0,0,3002,0,0,0,Idle,Normal,Normal,Normal,Normal,0x0,
+5,26-06-29,06:56:16,49024,34000,30000,30000,3268,3269,0,0,3002,0,0,0,Idle,Normal,Normal,Normal,Normal,0x0,
+Command,completed,successfully
+$$

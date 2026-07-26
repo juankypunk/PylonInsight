@@ -1,0 +1,12 @@
+﻿datalist,history,0
+@
+Save,data,every,1800,S
+Item,Time,Vo(mV),Cu(mA),Tempr,BTlow,BThigh,BVlow,BVhigh,UTlow,UThigh,UVlow,UVhigh,Base.St,Volt.St,Curr.St,Temp.St,Per%,ErrCode,Events,BatEvents,UnitEvents
+0,26-06-28,01:56:24,156313,165,42000,33000,36000,3453,3483,38000,42000,51884,52227,Charge,Normal,Normal,Normal,99%,0x0,
+1,26-06-28,02:26:24,151336,-842,42000,32000,36000,3338,3384,37000,40000,50224,50760,Dischg,Normal,Normal,Normal,98%,0x0,
+2,26-06-28,02:56:24,149532,-1478,41000,32000,35000,3317,3329,36000,39000,49791,49927,Dischg,Normal,Normal,Normal,97%,0x0,
+3,26-06-28,03:26:24,149287,-2897,41000,32000,35000,3315,3319,35000,39000,49750,49772,Dischg,Normal,Normal,Normal,95%,0x0,
+4,26-06-28,03:56:24,149379,-2428,41000,32000,35000,3316,3322,35000,39000,49791,49797,Dischg,Normal,Normal,Normal,92%,0x0,
+5,26-06-28,04:26:23,149283,-3016,41000,32000,35000,3314,3319,35000,38000,49757,49767,Dischg,Normal,Normal,Normal,89%,0x0,
+Command,completed,successfully
+$$

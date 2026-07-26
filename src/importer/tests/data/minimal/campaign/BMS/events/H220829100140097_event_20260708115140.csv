@@ -1,0 +1,9 @@
+﻿datalist,event,0
+@
+Item,Time,Vo(mV),Cu(mA),Tempr,BTlow,BThigh,BVlow,BVhigh,UTlow,UThigh,UVlow,UVhigh,Base.St,Volt.St,Curr.St,Temp.St,Per%,ErrCode,Events,BatEvents,UnitEvents
+0,26-02-19,20:51:19,209578,1178,30000,21000,24000,3461,3600,25000,28000,52177,52488,Charge,Normal,Normal,Normal,97%,0x0,BHV,
+1,26-02-19,21:09:43,212740,1177,30000,21000,24000,3465,3600,27000,32000,52441,53525,Charge,Normal,Normal,Normal,99%,0x0,BHV,
+2,26-02-19,21:30:45,213198,-754,31000,21000,25000,3445,3600,29000,35000,52196,53784,Dischg,Normal,Normal,Normal,99%,0x0,DSG,BHV,
+3,26-02-19,22:20:26,213227,-759,33000,22000,25000,3433,3600,30000,37000,52189,53808,Dischg,Normal,Normal,Normal,99%,0x0,DSG,BHV,
+Command,completed,successfully
+$$

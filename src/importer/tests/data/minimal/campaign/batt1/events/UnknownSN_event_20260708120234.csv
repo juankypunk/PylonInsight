@@ -1,0 +1,9 @@
+﻿datalist,event,0
+@
+Item,Time,Vo(mV),Tmpr,BTlow,BThigh,BVlow,BVhigh,PT.Tmpr,NT.Tmpr,Ref.Vol,Fan.Pwm,Fan1.Rpm,Fan2.Rpm,Base.St,Volt.St,Tmpr.St,PT.Tmpr.St,NT.Tmpr.St,Err.Code,Events
+0,26-03-06,20:18:31,53936,25000,18000,18000,3592,3600,0,0,3001,0,0,0,Idle,Normal,Normal,Normal,Normal,0x0,BHV,
+1,26-03-06,20:18:34,53954,25000,18000,18000,3593,3601,0,0,3001,0,0,0,Idle,Normal,Normal,Normal,Normal,0x0,BHV,
+2,26-03-06,20:18:34,53955,25000,18000,18000,3593,3601,0,0,3001,0,0,0,Idle,Normal,Normal,Normal,Normal,0x0,BHV,
+3,26-03-06,20:18:35,53963,25000,18000,18000,3594,3602,0,0,3001,0,0,0,Idle,Normal,Normal,Normal,Normal,0x0,BHV,
+Command,completed,successfully
+$$
