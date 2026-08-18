@@ -64,6 +64,9 @@ def parse_bmu_history(path: Path) -> list[History]:
                 break
 
             if row[0] == "$$":
+                break  # Any non-numeric first field marks the end of the data.
+
+            if not row[0].isdigit():
                 break
 
             if len(row) < 12:
