@@ -13,6 +13,13 @@ DATA_FILE = (
     / "UnknownSN_history_20260713203417.csv"
 )
 
+import pytest
+
+
+@pytest.fixture(scope="module")
+def records():
+    return parse_xhb_bmu_history(DATA_FILE)
+
 
 def test_record_count(records):
     assert len(records) == 1818
@@ -141,31 +148,3 @@ def test_history_objects(records):
     for record in records:
         assert record.values is not None
         assert isinstance(record.values, dict)
-
-
-def load_records():
-    return parse_xhb_bmu_history(DATA_FILE)
-
-
-if __name__ == "__main__":
-    records = load_records()
-
-    tests = [
-        test_record_count,
-        test_first_timestamp,
-        test_last_timestamp,
-        test_item_is_not_in_values,
-        test_date_and_time_are_not_in_values,
-        test_canonical_field_names,
-        test_numeric_fields_are_integers,
-        test_text_fields_are_strings,
-        test_invalid_timestamp_is_preserved,
-        test_invalid_timestamp_is_not_corrected,
-        test_history_objects,
-    ]
-
-    for test in tests:
-        test(records)
-        print(f"PASS: {test.__name__}")
-
-    print(f"\n{len(tests)} tests passed.")

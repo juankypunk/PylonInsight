@@ -13,6 +13,13 @@ DATA_FILE = (
     / "H220829100140097_history_20260713202315.csv"
 )
 
+import pytest
+
+
+@pytest.fixture(scope="module")
+def records():
+    return parse_bms_history(DATA_FILE)
+
 
 def test_record_count(records):
     assert len(records) == 512
@@ -127,32 +134,3 @@ def test_event_value_is_preserved(records):
     assert record.values["events"] == "IDLE"
     assert record.values["battery_events"] == ""
     assert record.values["unit_events"] == ""
-
-
-def load_records():
-    return parse_bms_history(DATA_FILE)
-
-
-if __name__ == "__main__":
-    records = load_records()
-
-    tests = [
-        test_record_count,
-        test_first_timestamp,
-        test_last_timestamp,
-        test_item_is_not_in_values,
-        test_date_and_time_are_not_in_values,
-        test_canonical_field_names,
-        test_numeric_fields_are_integers,
-        test_text_fields_are_strings,
-        test_records_are_chronological,
-        test_history_objects,
-        test_empty_events_are_preserved,
-        test_event_value_is_preserved,
-    ]
-
-    for test in tests:
-        test(records)
-        print(f"PASS: {test.__name__}")
-
-    print(f"\n{len(tests)} tests passed.")
