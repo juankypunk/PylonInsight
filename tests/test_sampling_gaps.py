@@ -1,5 +1,7 @@
 from datetime import timedelta
 
+import pytest
+
 from pyloninsight.analytics.sampling import find_sampling_gaps
 
 
@@ -192,6 +194,93 @@ def test_far_from_double_interval_is_not_gap():
     print("PASS: test_far_from_double_interval_is_not_gap")
 
 
+def test_zero_expected_interval_raises():
+    intervals = [
+        timedelta(minutes=30),
+    ]
+
+    with pytest.raises(
+        ValueError,
+        match="expected_interval must be greater than zero",
+    ):
+        find_sampling_gaps(
+            intervals,
+            expected_interval=timedelta(0),
+        )
+
+    print("PASS: test_zero_expected_interval_raises")
+
+
+def test_negative_expected_interval_raises():
+    intervals = [
+        timedelta(minutes=30),
+    ]
+
+    with pytest.raises(
+        ValueError,
+        match="expected_interval must be greater than zero",
+    ):
+        find_sampling_gaps(
+            intervals,
+            expected_interval=timedelta(minutes=-30),
+        )
+
+    print("PASS: test_negative_expected_interval_raises")
+
+
+def test_negative_tolerance_raises():
+    intervals = [
+        timedelta(minutes=60),
+    ]
+
+    with pytest.raises(
+        ValueError,
+        match="tolerance must not be negative",
+    ):
+        find_sampling_gaps(
+            intervals,
+            expected_interval=timedelta(minutes=30),
+            tolerance=timedelta(seconds=-1),
+        )
+
+    print("PASS: test_negative_tolerance_raises")
+
+
+def test_gap_at_exact_tolerance_is_detected():
+    intervals = [
+        timedelta(minutes=30),
+        timedelta(minutes=60, seconds=10),
+    ]
+
+    gaps = find_sampling_gaps(
+        intervals,
+        expected_interval=timedelta(minutes=30),
+        tolerance=timedelta(seconds=10),
+    )
+
+    assert len(gaps) == 1
+    assert gaps[0].multiple == 2
+
+    print("PASS: test_gap_at_exact_tolerance_is_detected")
+
+
+def test_gap_beyond_tolerance_is_not_detected():
+    intervals = [
+        timedelta(minutes=30),
+        timedelta(minutes=60, seconds=11),
+    ]
+
+    gaps = find_sampling_gaps(
+        intervals,
+        expected_interval=timedelta(minutes=30),
+        tolerance=timedelta(seconds=10),
+    )
+
+    assert gaps == []
+
+    print("PASS: test_gap_beyond_tolerance_is_not_detected")
+
+
 if __name__ == "__main__":
     test_no_gaps()
     test_one_missing_sample()
@@ -203,6 +292,11 @@ if __name__ == "__main__":
     test_input_intervals_are_not_modified()
     test_near_double_interval_is_gap()
     test_far_from_double_interval_is_not_gap()
+    test_zero_expected_interval_raises()
+    test_negative_expected_interval_raises()
+    test_negative_tolerance_raises()
+    test_gap_at_exact_tolerance_is_detected()
+    test_gap_beyond_tolerance_is_not_detected()
 
     print()
-    print("10 tests passed.")
+    print("15 tests passed.")
