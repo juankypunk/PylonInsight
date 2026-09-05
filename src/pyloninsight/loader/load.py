@@ -1,0 +1,83 @@
+from __future__ import annotations
+
+from pathlib import Path
+
+from pyloninsight.models.campaign import Campaign
+from pyloninsight.models.campaign_export import CampaignExport
+from pyloninsight.parsers.detailed import parse_detailed
+from pyloninsight.parsers.history import parse_bms_history
+from pyloninsight.parsers.history_bmu import parse_bmu_history
+from pyloninsight.parsers.history_xhb_bmu import parse_xhb_bmu_history
+
+HISTORY_PARSERS = {
+    "CMU_A": parse_bms_history,
+    "bmu": parse_bmu_history,
+    "XHB_BMU_NT": parse_xhb_bmu_history,
+}
+
+
+def load_campaign(path: Path) -> Campaign:
+    """
+    Discover and load a BatteryView campaign.
+
+    The loader currently loads:
+        - device metadata from detailed.txt
+        - device snapshots
+        - history records
+
+    Event data is loaded by a later stage.
+    """
+    from pyloninsight.discovery.discover import discover_campaign
+
+    campaign = discover_campaign(path)
+
+    for export in campaign.exports:
+        _load_export(export)
+
+    return campaign
+
+
+def _load_export(export: CampaignExport) -> None:
+    """
+    Load all currently supported data for one campaign export.
+    """
+    _load_export_metadata(export)
+    _load_export_history(export)
+
+
+def _load_export_metadata(export: CampaignExport) -> None:
+    """
+    Load Device and DeviceSnapshot information for one campaign export.
+    """
+    detailed = export.files.history_detailed
+
+    if detailed is None:
+        detailed = export.files.event_detailed
+
+    if detailed is None:
+        return
+
+    device, snapshot = parse_detailed(detailed)
+
+    export.device = device
+    export.snapshot = snapshot
+
+
+def _load_export_history(export: CampaignExport) -> None:
+    """
+    Load history records using the parser appropriate for the device model.
+    """
+    if export.device is None:
+        return
+
+    history_path = export.files.history_csv
+
+    if history_path is None:
+        return
+
+    parser = HISTORY_PARSERS.get(export.device.model)
+
+    if parser is None:
+        return
+
+    export.history = parser(history_path)

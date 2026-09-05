@@ -81,7 +81,7 @@ def parse_xhb_bmu_history(path: Path) -> list[History]:
                 continue
 
             # BatteryView footer.
-            if row[0] == "Command":
+            if row[0].startswith("Command"):
                 break
 
             if row[0] == "$$":
