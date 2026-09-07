@@ -79,7 +79,7 @@ def parse_bms_events(path: Path) -> list[Event]:
                 continue
 
             # BatteryView footer.
-            if row[0] == "Command":
+            if row[0].startswith("Command"):
                 break
 
             if row[0] == "$$":

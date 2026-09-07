@@ -9,10 +9,20 @@ from pyloninsight.parsers.history import parse_bms_history
 from pyloninsight.parsers.history_bmu import parse_bmu_history
 from pyloninsight.parsers.history_xhb_bmu import parse_xhb_bmu_history
 
+from pyloninsight.parsers.events import parse_bms_events
+from pyloninsight.parsers.events_bmu import parse_bmu_events
+from pyloninsight.parsers.events_xhb_bmu import parse_xhb_bmu_events
+
 HISTORY_PARSERS = {
     "CMU_A": parse_bms_history,
     "bmu": parse_bmu_history,
     "XHB_BMU_NT": parse_xhb_bmu_history,
+}
+
+EVENT_PARSERS = {
+    "CMU_A": parse_bms_events,
+    "bmu": parse_bmu_events,
+    "XHB_BMU_NT": parse_xhb_bmu_events,
 }
 
 
@@ -43,6 +53,7 @@ def _load_export(export: CampaignExport) -> None:
     """
     _load_export_metadata(export)
     _load_export_history(export)
+    _load_export_events(export)
 
 
 def _load_export_metadata(export: CampaignExport) -> None:
@@ -81,3 +92,24 @@ def _load_export_history(export: CampaignExport) -> None:
         return
 
     export.history = parser(history_path)
+
+
+def _load_export_events(export: CampaignExport) -> None:
+    """
+    Load event records using the parser appropriate for the device model.
+    """
+    if export.device is None:
+        return
+
+    event_path = export.files.event_csv
+    if event_path is None:
+        return
+
+    if event_path.stat().st_size == 0:
+        return
+
+    parser = EVENT_PARSERS.get(export.device.model)
+    if parser is None:
+        return
+
+    export.events = parser(event_path)
