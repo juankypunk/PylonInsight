@@ -1,17 +1,13 @@
 from __future__ import annotations
 
 from pathlib import Path
-
-from pyloninsight.models.campaign import Campaign
-from pyloninsight.models.campaign_export import CampaignExport
 from pyloninsight.parsers.detailed import parse_detailed
-from pyloninsight.parsers.history import parse_bms_history
-from pyloninsight.parsers.history_bmu import parse_bmu_history
-from pyloninsight.parsers.history_xhb_bmu import parse_xhb_bmu_history
-
 from pyloninsight.parsers.events import parse_bms_events
 from pyloninsight.parsers.events_bmu import parse_bmu_events
 from pyloninsight.parsers.events_xhb_bmu import parse_xhb_bmu_events
+from pyloninsight.parsers.history import parse_bms_history
+from pyloninsight.parsers.history_bmu import parse_bmu_history
+from pyloninsight.parsers.history_xhb_bmu import parse_xhb_bmu_history
 
 HISTORY_PARSERS = {
     "CMU_A": parse_bms_history,
@@ -34,8 +30,7 @@ def load_campaign(path: Path) -> Campaign:
         - device metadata from detailed.txt
         - device snapshots
         - history records
-
-    Event data is loaded by a later stage.
+        - event records
     """
     from pyloninsight.discovery.discover import discover_campaign
 
