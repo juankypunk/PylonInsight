@@ -10,8 +10,8 @@ CREATE TABLE device (
     barcode             VARCHAR(64) NOT NULL UNIQUE,
     device_type         device_type NOT NULL,
     manufacturer        VARCHAR(50),
+    model               VARCHAR(50),
     specification       VARCHAR(50), 
-    cell_count          SMALLINT,
     notes               TEXT
 );
 

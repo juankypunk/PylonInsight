@@ -21,11 +21,21 @@ CREATE TABLE device_snapshot (
 
     release_date            DATE,
 
+    manufacture_date_aprox  DATE,
+
     module_afetype          VARCHAR(30),
 
     module_celltype         VARCHAR(30),
 
     fan_exist               BOOLEAN,
 
-    xhb_v3_board            BOOLEAN
+    xhb_v3_board            BOOLEAN,
+    
+    cell_count              SMALLINT,
+
+    capacity_ah             NUMERIC(8,2),
+
+    nominal_voltage_v       NUMERIC(8,2),
+
+    additional              JSONB DEFAULT '{}'::JSONB
 );

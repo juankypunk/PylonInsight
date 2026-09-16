@@ -1,8 +1,15 @@
 CREATE TYPE campaign_role AS ENUM (
     'BMS',
-    'batt1',
-    'batt2',
-    'batt3'
+    'BMU1',
+    'BMU2',
+    'BMU3',
+    'BMU4',
+    'BMU5',
+    'BMU6',
+    'BMU7',
+    'BMU8',
+    'BMU9',
+    'BMU10'
 );
 
 

@@ -184,7 +184,7 @@ def test_load_campaign_loads_device_metadata(tmp_path: Path) -> None:
     assert export.device.model == "bmu"
 
     assert export.snapshot.board_version == "HP0115SV10R01"
-    assert export.snapshot.firmware_version == "V3.2"
+    assert export.snapshot.soft_version == "V3.2"
     assert export.snapshot.cell_count == 15
     assert export.snapshot.capacity_ah == 50.0
     assert export.snapshot.nominal_voltage_v == 48.0
@@ -421,3 +421,34 @@ def test_load_campaign_loads_xhb_bmu_events(tmp_path: Path) -> None:
     assert event.values["negative_terminal_temperature"] == 50
     assert event.values["reference_voltage"] == 1000
     assert event.values["fan_pwm"] == 1100
+
+
+def test_load_campaign_leaves_unsupported_model_unparsed(
+    tmp_path: Path,
+) -> None:
+    campaign_path = tmp_path / "campaign"
+
+    create_minimal_export(campaign_path / "BMS")
+    create_minimal_export(campaign_path / "batt1")
+
+    history_path = campaign_path / "batt1" / "history"
+
+    write_detailed(
+        history_path / "UnknownSN_history_detailed.txt",
+        device_name="UNKNOWN_MODEL",
+    )
+
+    write_bmu_history(
+        history_path / "UnknownSN_history.csv",
+    )
+
+    campaign = load_campaign(campaign_path)
+
+    export = next(export for export in campaign.exports if export.role == "batt1")
+
+    assert export.device is not None
+    assert export.snapshot is not None
+
+    assert export.device.model == "UNKNOWN_MODEL"
+    assert export.history == []
+    assert export.events == []

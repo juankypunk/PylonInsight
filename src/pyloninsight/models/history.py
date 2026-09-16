@@ -10,6 +10,6 @@ class History(BaseModel):
     One history record exported by BatteryView.
     """
 
-    timestamp: datetime
+    timestamp: datetime | None
 
     values: dict

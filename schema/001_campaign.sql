@@ -10,4 +10,4 @@ COMMENT ON TABLE campaign IS
 'Logical acquisition campaign grouping BatteryView exports.';
 
 COMMENT ON COLUMN campaign.capture_date IS
-'Representative timestamp of the acquisition campaign.';
+'Earliest export timestamp found among the files of the campaign.';

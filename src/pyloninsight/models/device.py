@@ -13,8 +13,8 @@ class Device(BaseModel):
     """
 
     barcode: str
-
+    device_type: str | None = None
     manufacturer: str | None = None
     model: str | None = None
-
+    specification: str | None = None
     notes: str | None = None

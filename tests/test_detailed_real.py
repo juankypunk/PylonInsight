@@ -22,11 +22,13 @@ def test_parse_real_bms() -> None:
 
     assert snapshot.board_version == "TISP01V10R02_1"
     assert snapshot.hardware_version == "V10R9C5"
-    assert snapshot.firmware_version == "V5.7"
+    assert snapshot.soft_version == "V5.7"
     assert snapshot.boot_version == "V1.4"
     assert snapshot.cell_count == 45
     assert snapshot.capacity_ah == 50.0
     assert snapshot.nominal_voltage_v == 144.0
+    assert snapshot.manufacture_date_aprox is not None
+    assert snapshot.manufacture_date_aprox.isoformat() == "2022-08-30"
 
     assert snapshot.additional is not None
     assert snapshot.additional["main_soft_version"] == "B52.36.0"
@@ -41,11 +43,13 @@ def test_parse_real_legacy_bmu() -> None:
     assert device.model == "bmu"
 
     assert snapshot.board_version == "HP0115SV10R01"
-    assert snapshot.firmware_version == "V3.2"
+    assert snapshot.soft_version == "V3.2"
     assert snapshot.boot_version == "V1.4"
     assert snapshot.cell_count == 15
     assert snapshot.capacity_ah == 50.0
     assert snapshot.nominal_voltage_v == 48.0
+    assert snapshot.manufacture_date_aprox is not None
+    assert snapshot.manufacture_date_aprox.isoformat() == "2022-06-04"
 
     assert snapshot.additional is not None
     assert snapshot.additional["main_soft_version"] == "B52.2.0"
@@ -60,11 +64,13 @@ def test_parse_real_xhb_bmu() -> None:
     assert device.model == "XHB_BMU_NT"
 
     assert snapshot.board_version == "V30R02C002"
-    assert snapshot.firmware_version == "V1.2"
+    assert snapshot.soft_version == "V1.2"
     assert snapshot.boot_version == "V1.0"
     assert snapshot.cell_count == 15
     assert snapshot.capacity_ah == 50.0
     assert snapshot.nominal_voltage_v == 48.0
+    assert snapshot.manufacture_date_aprox is not None
+    assert snapshot.manufacture_date_aprox.isoformat() == "2025-11-20"
 
     assert snapshot.additional is not None
     assert snapshot.additional["main_soft_version"] == "B52.5.0"

@@ -14,13 +14,13 @@ Each campaign may contain exports from one BMS and one or more battery modules (
 
 The importer must:
 
-- Detect all exported devices.
-- Register previously unknown devices.
-- Preserve the original acquisition structure.
-- Import historical measurements.
-- Import event logs.
-- Store device metadata.
-- Be idempotent whenever possible.
+* Detect all exported devices.
+* Register previously unknown devices.
+* Preserve the original acquisition structure.
+* Import historical measurements.
+* Import event logs.
+* Store device metadata.
+* Be idempotent whenever possible.
 
 ---
 
@@ -44,23 +44,24 @@ Example:
 
 ```text
 2026-07-08_SOC50/
+
 │
 ├── BMS/
 │   ├── history/
 │   ├── events/
 │   └── scanlog/
 │
-├── batt1/
+├── BMU1/
 │   ├── history/
 │   ├── events/
 │   └── scanlog/
 │
-├── batt2/
+├── BMU2/
 │   ├── history/
 │   ├── events/
 │   └── scanlog/
 │
-└── batt3/
+└── BMU3/
     ├── history/
     ├── events/
     └── scanlog/
@@ -81,19 +82,21 @@ The recommended import order is:
 5. Extract and store device snapshots.
 6. Import history datasets.
 7. Import event datasets.
-8. Import scanlog datasets (optional).
+8. Record the presence of optional scanlog exports.
+
+Scanlog contents are not imported or analyzed.
 
 ---
 
 ## Device discovery
 
-Each device is uniquely identified by its barcode (serial number).
+Each device is uniquely identified by its barcode.
 
 The importer shall:
 
-- search the database for the barcode;
-- create a new device if it does not exist;
-- reuse the existing device otherwise.
+* search the database for the barcode;
+* create a new device if it does not exist;
+* reuse the existing device otherwise.
 
 This allows long-term tracking of the same physical battery across multiple campaigns.
 
@@ -103,7 +106,7 @@ This allows long-term tracking of the same physical battery across multiple camp
 
 Each exported device participating in a campaign creates one record in the `campaign_export` table.
 
-The campaign role (BMS, batt1, batt2, batt3...) represents the physical position occupied during that campaign only.
+The campaign role (`BMS`, `BMU1`, `BMU2`, `BMU3`, ...) represents the physical position occupied during that campaign only.
 
 The same physical module may occupy different positions in different campaigns.
 
@@ -123,9 +126,9 @@ This information includes firmware versions, hardware revision and device-specif
 
 History files are imported into the corresponding normalized tables:
 
-- history_bms
-- history_bmu
-- history_xhb_bmu
+* `history_bms`
+* `history_bmu`
+* `history_xhb_bmu`
 
 The timestamp is reconstructed from the Date and Time fields.
 
@@ -137,19 +140,21 @@ BatteryView omits the Date column from the CSV header. The importer shall compen
 
 Events are imported into the corresponding normalized tables:
 
-- event_bms
-- event_bmu
-- event_xhb_bmu
+* `event_bms`
+* `event_bmu`
+* `event_xhb_bmu`
 
 Text files shall be decoded as UTF-16 Little Endian.
 
 ---
 
-## Scanlog import
+## Scanlog handling
 
-Scanlog import is optional.
+BatteryView can optionally generate a scanlog when connecting to the battery system.
 
-If present, scanlog data shall be associated with the corresponding campaign export.
+The scanlog represents a real-time diagnostic view and is not required for the historical data export analyzed by PylonInsight.
+
+PylonInsight detects and records the presence of scanlog exports but does not import or analyze their contents.
 
 ---
 
@@ -159,10 +164,10 @@ The importer should continue importing whenever possible.
 
 Typical recoverable situations include:
 
-- missing optional directories;
-- missing scanlog exports;
-- duplicated imports;
-- empty event lists.
+* missing optional directories;
+* missing scanlog exports;
+* duplicated imports;
+* empty event lists.
 
 Corrupted or malformed files should generate warnings while preserving the remaining import process.
 
@@ -174,9 +179,9 @@ Running the importer multiple times on the same campaign should not duplicate in
 
 The importer should detect previously imported entities whenever possible by using:
 
-- device barcode;
-- campaign identifier;
-- unique timestamp constraints.
+* device barcode;
+* campaign identifier;
+* unique timestamp constraints.
 
 ---
 
@@ -184,11 +189,11 @@ The importer should detect previously imported entities whenever possible by usi
 
 The importer should perform basic consistency checks, including:
 
-- duplicated timestamps;
-- inconsistent device metadata;
-- unexpected hardware type changes;
-- malformed timestamps;
-- invalid UTF-16 text files.
+* duplicated timestamps;
+* inconsistent device metadata;
+* unexpected hardware type changes;
+* malformed timestamps;
+* invalid UTF-16 text files.
 
 Warnings should be reported to the user but should not necessarily abort the import process.
 
@@ -198,10 +203,9 @@ Warnings should be reported to the user but should not necessarily abort the imp
 
 Future versions of the importer may include:
 
-- automatic campaign discovery;
-- incremental imports;
-- checksum verification;
-- import statistics;
-- parallel processing;
-- command line filtering by device or dataset.
-
+* automatic campaign discovery;
+* incremental imports;
+* checksum verification;
+* import statistics;
+* parallel processing;
+* command line filtering by device or dataset.

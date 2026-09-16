@@ -47,6 +47,7 @@ def parse_detailed(path: Path) -> tuple[Device, DeviceSnapshot]:
     """
 
     metadata = _read_metadata(path)
+    device_test_time = _parse_datetime(metadata.get("device_test_time"))
 
     device_name = metadata.get("device_name")
     if not device_name:
@@ -61,12 +62,18 @@ def parse_detailed(path: Path) -> tuple[Device, DeviceSnapshot]:
     snapshot = DeviceSnapshot(
         board_version=metadata.get("board_version"),
         hardware_version=metadata.get("hardware_version"),
-        firmware_version=metadata.get("soft_version"),
+        main_soft_version=metadata.get("main_soft_version"),
+        soft_version=metadata.get("soft_version"),
+        sub_soft_version=metadata.get("sub_soft_version"),
         boot_version=metadata.get("boot_version"),
+        comm_version=metadata.get("comm_version"),
         release_date=_parse_date(metadata.get("release_date")),
         cell_count=_parse_int(metadata.get("cell_number")),
         capacity_ah=_parse_capacity(metadata.get("specification")),
         nominal_voltage_v=_parse_voltage(metadata.get("specification")),
+        manufacture_date_aprox=(
+            device_test_time.date() if device_test_time is not None else None
+        ),
         additional={
             key: value for key, value in metadata.items() if key not in _SNAPSHOT_FIELDS
         },
@@ -165,6 +172,16 @@ def _parse_date(value: str | None) -> date | None:
 
     try:
         return datetime.strptime(value, "%y-%m-%d").date()
+    except ValueError:
+        return None
+
+
+def _parse_datetime(value: str | None) -> datetime | None:
+    if not value:
+        return None
+
+    try:
+        return datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
     except ValueError:
         return None
 

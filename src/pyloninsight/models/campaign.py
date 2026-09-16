@@ -13,6 +13,8 @@ class Campaign(BaseModel):
 
     name: str
 
+    capture_date: datetime | None = None
+
     created_at: datetime | None = None
 
     description: str | None = None
@@ -35,8 +37,4 @@ class Campaign(BaseModel):
 
     @property
     def battery_modules(self):
-        return [
-            export
-            for export in self.exports
-            if export.role.upper() != "BMS"
-        ]
+        return [export for export in self.exports if export.role.upper() != "BMS"]
