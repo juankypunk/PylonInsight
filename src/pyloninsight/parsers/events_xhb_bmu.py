@@ -134,12 +134,11 @@ def parse_xhb_bmu_events(path: Path) -> list[Event]:
 
                 values[canonical_name] = value
 
-            event_code = values["events"]
-
             records.append(
                 Event(
+                    item=int(row[0]),
                     timestamp=timestamp,
-                    event_code=event_code,
+                    event_code=values["events"],
                     values=values,
                 )
             )

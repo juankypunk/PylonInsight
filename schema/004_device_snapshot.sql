@@ -37,5 +37,9 @@ CREATE TABLE device_snapshot (
 
     nominal_voltage_v       NUMERIC(8,2),
 
-    additional              JSONB DEFAULT '{}'::JSONB
+    additional              JSONB DEFAULT '{}'::JSONB,
+
+    CONSTRAINT uq_device_snapshot_campaign_export
+        UNIQUE (campaign_export_id);
 );
+

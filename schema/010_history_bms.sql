@@ -122,9 +122,6 @@ COMMENT ON COLUMN history_bms.battery_events IS
 COMMENT ON COLUMN history_bms.unit_events IS
 'Unit-specific event flags. Meaning currently unknown.';
 
-CREATE INDEX idx_history_bms_campaign_export
-    ON history_bms(campaign_export_id);
-
 CREATE INDEX idx_history_bms_timestamp
     ON history_bms(record_timestamp);
 

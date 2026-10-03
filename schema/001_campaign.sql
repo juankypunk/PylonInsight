@@ -1,7 +1,7 @@
 CREATE TABLE campaign (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    capture_date TIMESTAMP NOT NULL,
+    capture_date TIMESTAMP,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

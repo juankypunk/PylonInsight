@@ -45,6 +45,8 @@ class ExportFiles(BaseModel):
     @property
     def is_complete(self) -> bool:
         """
-        Returns True if the mandatory BatteryView exports are present.
+        Return True if both history and event CSV exports are present.
+        An export may still be valid and importable when one of these
+        datasets is missing.
         """
         return self.has_history and self.has_events

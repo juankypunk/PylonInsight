@@ -10,10 +10,8 @@ class Event(BaseModel):
     One BatteryView event record.
     """
 
+    item: int
     timestamp: datetime
-
     event_code: str
-
     description: str | None = None
-
     values: dict | None = None

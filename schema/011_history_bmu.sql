@@ -81,8 +81,5 @@ COMMENT ON COLUMN history_bmu.events IS
 COMMENT ON COLUMN history_bmu.battery_events IS
 'Battery-specific event flags. Meaning currently under investigation.';
 
-CREATE INDEX idx_history_bmu_campaign_export
-    ON history_bmu(campaign_export_id);
-
 CREATE INDEX idx_history_bmu_timestamp
     ON history_bmu(record_timestamp);

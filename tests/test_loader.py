@@ -305,8 +305,8 @@ def test_load_campaign_loads_xhb_bmu_history(tmp_path: Path) -> None:
     assert record.values["battery_temp_high"] == 26
     assert record.values["battery_voltage_low"] == 48000
     assert record.values["battery_voltage_high"] == 48100
-    assert record.values["positive_temperature"] == 25
-    assert record.values["negative_temperature"] == 26
+    assert record.values["positive_terminal_temperature"] == 25
+    assert record.values["negative_terminal_temperature"] == 26
     assert record.values["reference_voltage"] == 3300
     assert record.values["fan_pwm"] == 3400
     assert record.values["fan1_rpm"] == 5000

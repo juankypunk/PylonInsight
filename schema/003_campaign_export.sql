@@ -31,8 +31,6 @@ CREATE TABLE campaign_export (
 
     events_present      BOOLEAN NOT NULL DEFAULT FALSE,
 
-    info_present        BOOLEAN NOT NULL DEFAULT FALSE,
-
     scanlog_present     BOOLEAN NOT NULL DEFAULT FALSE,
 
     UNIQUE(campaign_id, role)

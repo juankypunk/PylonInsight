@@ -125,8 +125,5 @@ COMMENT ON COLUMN history_xhb_bmu.error_code IS
 COMMENT ON COLUMN history_xhb_bmu.events IS
 'General event flags exported by BatteryView.';
 
-CREATE INDEX idx_history_xhb_bmu_campaign_export
-    ON history_xhb_bmu(campaign_export_id);
-
 CREATE INDEX idx_history_xhb_bmu_timestamp
     ON history_xhb_bmu(record_timestamp);

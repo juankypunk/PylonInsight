@@ -160,6 +160,7 @@ def parse_bms_events(path: Path) -> list[Event]:
 
             records.append(
                 Event(
+                    item=int(row[0]),
                     timestamp=timestamp,
                     event_code=event_code,
                     values=values,
