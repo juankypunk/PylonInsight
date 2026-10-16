@@ -10,7 +10,7 @@ class DeviceSnapshot(BaseModel):
     Device information captured during one campaign export.
     """
 
-    timestamp: datetime | None = None
+    snapshot_timestamp: datetime | None = None
 
     board_version: str | None = None
     hardware_version: str | None = None
