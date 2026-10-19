@@ -85,3 +85,18 @@ class DeviceRepository:
             specification=specification,
             notes=notes,
         )
+
+    def get_id_by_barcode(self, barcode: str) -> int | None:
+        """Return the database ID of a device identified by its barcode."""
+        with self.connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT id
+                FROM device
+                WHERE barcode = %s
+                """,
+                (barcode,),
+            )
+            result = cursor.fetchone()
+
+        return result[0] if result is not None else None

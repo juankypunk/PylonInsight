@@ -121,3 +121,49 @@ def test_get_device_by_barcode_returns_none_when_not_found():
                 """,
         ("UNKNOWN-BARCODE",),
     )
+
+
+def test_get_device_id_by_barcode():
+    cursor = MagicMock()
+    cursor.fetchone.return_value = (7,)
+
+    connection = MagicMock()
+    connection.cursor.return_value.__enter__.return_value = cursor
+
+    repository = DeviceRepository(connection)
+
+    device_id = repository.get_id_by_barcode("TEST-BARCODE-001")
+
+    assert device_id == 7
+
+    cursor.execute.assert_called_once_with(
+        """
+                SELECT id
+                FROM device
+                WHERE barcode = %s
+                """,
+        ("TEST-BARCODE-001",),
+    )
+
+
+def test_get_device_id_by_barcode_returns_none_when_not_found():
+    cursor = MagicMock()
+    cursor.fetchone.return_value = None
+
+    connection = MagicMock()
+    connection.cursor.return_value.__enter__.return_value = cursor
+
+    repository = DeviceRepository(connection)
+
+    device_id = repository.get_id_by_barcode("UNKNOWN-BARCODE")
+
+    assert device_id is None
+
+    cursor.execute.assert_called_once_with(
+        """
+                SELECT id
+                FROM device
+                WHERE barcode = %s
+                """,
+        ("UNKNOWN-BARCODE",),
+    )

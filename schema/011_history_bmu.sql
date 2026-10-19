@@ -10,10 +10,10 @@ CREATE TABLE history_bmu (
 
     id                  BIGSERIAL PRIMARY KEY,
 
-    campaign_export_id  BIGINT NOT NULL
-        REFERENCES campaign_export(id)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
+    device_id           BIGINT NOT NULL
+    REFERENCES device(id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
 
     record_timestamp    TIMESTAMP NOT NULL,
 
@@ -38,15 +38,15 @@ CREATE TABLE history_bmu (
     battery_events      TEXT,
 
     CONSTRAINT uq_history_bmu
-        UNIQUE (campaign_export_id, record_timestamp)
+        UNIQUE (device_id, record_timestamp)
 
 );
 
 COMMENT ON TABLE history_bmu IS
 'Historical measurements exported by BatteryView from first-generation BMU devices.';
 
-COMMENT ON COLUMN history_bmu.campaign_export_id IS
-'Reference to the BatteryView export that generated this record.';
+COMMENT ON COLUMN history_bmu.device_id IS
+'Reference to the device for which this record contains historical measurements.';
 
 COMMENT ON COLUMN history_bmu.record_timestamp IS
 'Timestamp reconstructed from the Date and Time columns exported by BatteryView.';

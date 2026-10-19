@@ -9,10 +9,10 @@ CREATE TABLE history_bms (
 
     id                  BIGSERIAL PRIMARY KEY,
 
-    campaign_export_id  BIGINT NOT NULL
-        REFERENCES campaign_export(id)
+    device_id BIGINT NOT NULL
+        REFERENCES device(id)
         ON UPDATE CASCADE
-        ON DELETE CASCADE,
+        ON DELETE RESTRICT,
 
     record_timestamp    TIMESTAMP NOT NULL,
 
@@ -49,15 +49,15 @@ CREATE TABLE history_bms (
     unit_events         TEXT,
 
     CONSTRAINT uq_history_bms
-        UNIQUE (campaign_export_id, record_timestamp)
+        UNIQUE (device_id, record_timestamp)
 
 );
 
 COMMENT ON TABLE history_bms IS
 'Historical measurements exported by BatteryView from the SC0500A BMS.';
 
-COMMENT ON COLUMN history_bms.campaign_export_id IS
-'Reference to the BatteryView export that generated this record.';
+COMMENT ON COLUMN history_bms.device_id IS
+'Reference to the device for which this record contains historical data.';
 
 COMMENT ON COLUMN history_bms.record_timestamp IS
 'Timestamp reconstructed from the Date and Time columns exported by BatteryView.';

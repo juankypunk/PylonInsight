@@ -9,10 +9,10 @@ CREATE TABLE history_xhb_bmu (
 
     id                          BIGSERIAL PRIMARY KEY,
 
-    campaign_export_id          BIGINT NOT NULL
-        REFERENCES campaign_export(id)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
+    device_id           BIGINT NOT NULL
+    REFERENCES device(id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
 
     record_timestamp            TIMESTAMP NOT NULL,
 
@@ -55,15 +55,15 @@ CREATE TABLE history_xhb_bmu (
     events                      TEXT,
 
     CONSTRAINT uq_history_xhb_bmu
-        UNIQUE (campaign_export_id, record_timestamp)
+        UNIQUE (device_id, record_timestamp)
 
 );
 
 COMMENT ON TABLE history_xhb_bmu IS
 'Historical measurements exported by BatteryView from XHB_BMU_NT battery modules.';
 
-COMMENT ON COLUMN history_xhb_bmu.campaign_export_id IS
-'Reference to the BatteryView export that generated this record.';
+COMMENT ON COLUMN history_xhb_bmu.device_id IS
+'Reference to the device for which this record contains historical measurements.';
 
 COMMENT ON COLUMN history_xhb_bmu.record_timestamp IS
 'Timestamp reconstructed from the Date and Time columns exported by BatteryView. The Date column is missing from the CSV header due to a BatteryView export bug but is present in every record.';
