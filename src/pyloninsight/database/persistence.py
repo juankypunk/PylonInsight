@@ -22,6 +22,12 @@ from pyloninsight.database.repositories.event_xhb_bmu import (
 from pyloninsight.database.repositories.history_bms import (
     HistoryBMSRepository,
 )
+from pyloninsight.database.repositories.history_bmu import (
+    HistoryBMURepository,
+)
+from pyloninsight.database.repositories.history_xhb_bmu import (
+    HistoryXHBBMURepository,
+)
 from pyloninsight.models.campaign import Campaign
 from pyloninsight.models.device import Device
 
@@ -46,6 +52,8 @@ class CampaignPersistence:
         self.export_repository = CampaignExportRepository(connection)
         self.snapshot_repository = DeviceSnapshotRepository(connection)
         self.history_bms_repository = HistoryBMSRepository(connection)
+        self.history_bmu_repository = HistoryBMURepository(connection)
+        self.history_xhb_bmu_repository = HistoryXHBBMURepository(connection)
 
         self.event_repositories = {
             model: repository(connection)
@@ -92,12 +100,25 @@ class CampaignPersistence:
                     snapshot=export.snapshot,
                 )
 
-            if export.history and device.model == "CMU_A":
-                self.history_bms_repository.create_many(
-                    device_id=device_id,
-                    campaign_export_id=export_id,
-                    records=export.history,
-                )
+            if export.history:
+                if device.model == "CMU_A":
+                    self.history_bms_repository.create_many(
+                        device_id=device_id,
+                        campaign_export_id=export_id,
+                        records=export.history,
+                    )
+                elif device.model == "bmu":
+                    self.history_bmu_repository.create_many(
+                        device_id=device_id,
+                        campaign_export_id=export_id,
+                        records=export.history,
+                    )
+                elif device.model == "XHB_BMU_NT":
+                    self.history_xhb_bmu_repository.create_many(
+                        device_id=device_id,
+                        campaign_export_id=export_id,
+                        records=export.history,
+                    )
 
             event_repository = self.event_repositories.get(device.model)
 

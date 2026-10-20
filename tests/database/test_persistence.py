@@ -26,6 +26,12 @@ def persistence():
         ) as snapshot_repo,
         patch("pyloninsight.database.persistence.HistoryBMSRepository") as history_repo,
         patch(
+            "pyloninsight.database.persistence.HistoryBMURepository"
+        ) as history_bmu_repo,
+        patch(
+            "pyloninsight.database.persistence.HistoryXHBBMURepository"
+        ) as history_xhb_bmu_repo,
+        patch(
             "pyloninsight.database.persistence.EVENT_REPOSITORIES",
             new_callable=dict,
         ) as event_repositories,
@@ -58,6 +64,8 @@ def persistence():
         export_repo.assert_called_once_with(connection)
         snapshot_repo.assert_called_once_with(connection)
         history_repo.assert_called_once_with(connection)
+        history_bmu_repo.assert_called_once_with(connection)
+        history_xhb_bmu_repo.assert_called_once_with(connection)
 
 
 @pytest.fixture
@@ -231,3 +239,123 @@ def test_save_persists_bms_events(persistence, campaign):
         campaign_export_id=101,
         events=events,
     )
+
+
+def test_save_persists_bmu_history(persistence):
+    """BMU history is saved through the BMU history repository."""
+    persistence.campaign_repository.create.return_value = 42
+    persistence.device_repository.get_id_by_barcode.return_value = 8
+    persistence.export_repository.create.return_value = 102
+
+    device = Device(
+        barcode="TEST-BMU-001",
+        device_type="BMU",
+        manufacturer="Pylontech",
+        model="bmu",
+    )
+
+    records = [
+        History(
+            timestamp=datetime(2026, 7, 1, 12, 0, 0),
+            values={
+                "module_voltage": 52000,
+                "module_temperature": 25,
+                "temperature_low": 24,
+                "temperature_high": 27,
+                "cell_voltage_low": 3400,
+                "cell_voltage_high": 3500,
+                "voltage_state": "Normal",
+                "temperature_state": "Normal",
+                "events": "",
+                "battery_events": "",
+            },
+        )
+    ]
+
+    export = CampaignExport(
+        role="BMU",
+        export_timestamp=datetime(2026, 7, 1, 12, 0, 0),
+        device=device,
+        history=records,
+    )
+
+    campaign = Campaign(
+        name="test-bmu-campaign",
+        capture_date=datetime(2026, 7, 1),
+        exports=[export],
+    )
+
+    persistence.save(campaign)
+
+    persistence.history_bmu_repository.create_many.assert_called_once_with(
+        device_id=8,
+        campaign_export_id=102,
+        records=records,
+    )
+
+    persistence.history_bms_repository.create_many.assert_not_called()
+
+
+def test_save_persists_xhb_bmu_history(persistence):
+    """XHB_BMU_NT history is saved through its history repository."""
+    persistence.campaign_repository.create.return_value = 42
+    persistence.device_repository.get_id_by_barcode.return_value = 9
+    persistence.export_repository.create.return_value = 103
+
+    device = Device(
+        barcode="TEST-XHB-BMU-001",
+        device_type="XHB_BMU",
+        manufacturer="Pylontech",
+        model="XHB_BMU_NT",
+    )
+
+    records = [
+        History(
+            timestamp=datetime(2026, 7, 1, 12, 0, 0),
+            values={
+                "module_voltage": 52000,
+                "module_temperature": 25,
+                "battery_temp_low": 24,
+                "battery_temp_high": 27,
+                "battery_voltage_low": 3400,
+                "battery_voltage_high": 3500,
+                "positive_terminal_temperature": 26,
+                "negative_terminal_temperature": 25,
+                "reference_voltage": 2500,
+                "fan_pwm": 30,
+                "fan1_rpm": 1200,
+                "fan2_rpm": 1180,
+                "base_state": "Normal",
+                "voltage_state": "Normal",
+                "temperature_state": "Normal",
+                "positive_terminal_temperature_state": "Normal",
+                "negative_terminal_temperature_state": "Normal",
+                "error_code": "",
+                "events": "",
+            },
+        )
+    ]
+
+    export = CampaignExport(
+        role="XHB_BMU",
+        export_timestamp=datetime(2026, 7, 1, 12, 0, 0),
+        device=device,
+        history=records,
+    )
+
+    campaign = Campaign(
+        name="test-xhb-bmu-campaign",
+        capture_date=datetime(2026, 7, 1),
+        exports=[export],
+    )
+
+    persistence.save(campaign)
+
+    persistence.history_xhb_bmu_repository.create_many.assert_called_once_with(
+        device_id=9,
+        campaign_export_id=103,
+        records=records,
+    )
+
+    persistence.history_bms_repository.create_many.assert_not_called()
+    persistence.history_bmu_repository.create_many.assert_not_called()

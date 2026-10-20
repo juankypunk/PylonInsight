@@ -1,169 +1,228 @@
-"""Repository for BMU history measurements."""
+"""Tests for the BMU history repository."""
 
 import logging
+from datetime import datetime
+from unittest.mock import MagicMock
 
-import psycopg
-
+from pyloninsight.database.repositories.history_bmu import (
+    HistoryBMURepository,
+)
 from pyloninsight.models.history import History
 
-logger = logging.getLogger(__name__)
 
+def make_history(
+    timestamp: datetime | None = None,
+    **overrides,
+) -> History:
+    """Create a representative BMU history record."""
+    values = {
+        "module_voltage": 52000,
+        "module_temperature": 25,
+        "temperature_low": 24,
+        "temperature_high": 27,
+        "cell_voltage_low": 3400,
+        "cell_voltage_high": 3500,
+        "voltage_state": "Normal",
+        "temperature_state": "Normal",
+        "events": "",
+        "battery_events": "",
+    }
 
-class HistoryBMURepository:
-    """Persist BMU history measurements and their export associations.
-
-    Measurements are uniquely identified by the physical device and
-    timestamp. If a measurement already exists, its original values are
-    preserved and the measurement is associated with the new export.
-    """
-
-    FIELD_MAPPING = (
-        ("module_voltage_mv", "module_voltage"),
-        ("module_temperature_c", "module_temperature"),
-        ("temperature_low_c", "temperature_low"),
-        ("temperature_high_c", "temperature_high"),
-        ("cell_voltage_low_mv", "cell_voltage_low"),
-        ("cell_voltage_high_mv", "cell_voltage_high"),
-        ("voltage_state", "voltage_state"),
-        ("temperature_state", "temperature_state"),
-        ("events", "events"),
-        ("battery_events", "battery_events"),
+    values.update(
+        {key: value for key, value in overrides.items() if key != "timestamp"}
     )
 
-    DB_COLUMNS = tuple(column for column, _ in FIELD_MAPPING)
+    if "timestamp" not in overrides and timestamp is None:
+        timestamp = datetime(2026, 7, 1, 12, 0, 0)
 
-    VALUE_KEYS = tuple(key for _, key in FIELD_MAPPING)
+    return History(
+        timestamp=timestamp,
+        values=values,
+    )
 
-    def __init__(self, connection: psycopg.Connection):
-        """Initialize the repository with an existing database connection."""
-        self.connection = connection
 
-    def create_many(
-        self,
-        device_id: int,
-        campaign_export_id: int,
-        records: list[History],
-    ) -> list[int]:
-        """Persist measurements and associate them with a campaign export.
+def make_repository():
+    """Create a repository with a mocked database connection."""
+    connection = MagicMock()
+    cursor = connection.cursor.return_value.__enter__.return_value
 
-        Measurements are deduplicated by ``(device_id, record_timestamp)``.
+    repository = HistoryBMURepository(connection)
 
-        If an existing measurement has different values, its stored values
-        are preserved and a warning is logged.
+    return repository, connection, cursor
 
-        Records without a timestamp are skipped.
 
-        Returns:
-            The IDs of the persisted measurements in input order, excluding
-            records skipped because their timestamp is None.
-        """
-        if not records:
-            return []
+def get_record_values(record: History) -> tuple:
+    """Return record values in database column order."""
+    return tuple(record.values[key] for key in HistoryBMURepository.VALUE_KEYS)
 
-        valid_records = []
 
-        for record in records:
-            if record.timestamp is None:
-                logger.warning(
-                    "Skipping BMU history record without a timestamp "
-                    "for device_id=%s and campaign_export_id=%s",
-                    device_id,
-                    campaign_export_id,
-                )
-                continue
+def make_existing_row(history_id: int, record: History) -> tuple:
+    """Create a database row representing an existing measurement."""
+    return (history_id, *get_record_values(record))
 
-            valid_records.append(record)
 
-        if not valid_records:
-            return []
+def test_create_many_inserts_new_measurement_and_association():
+    """A new measurement is inserted and linked to its export."""
+    repository, connection, cursor = make_repository()
 
-        column_names = ", ".join(self.DB_COLUMNS)
-        placeholders = ", ".join(["%s"] * (len(self.DB_COLUMNS) + 2))
+    record = make_history()
+    device_id = 10
+    campaign_export_id = 20
+    history_id = 100
 
-        insert_sql = f"""
-            INSERT INTO history_bmu (
-                device_id,
-                record_timestamp,
-                {column_names}
-            )
-            VALUES ({placeholders})
-            ON CONFLICT (device_id, record_timestamp) DO NOTHING
-            RETURNING id
-        """
+    cursor.fetchone.return_value = (history_id,)
 
-        select_sql = f"""
-            SELECT id, {column_names}
-            FROM history_bmu
-            WHERE device_id = %s
-              AND record_timestamp = %s
-        """
+    result = repository.create_many(
+        device_id=device_id,
+        campaign_export_id=campaign_export_id,
+        records=[record],
+    )
 
-        association_sql = """
-            INSERT INTO history_bmu_export (
-                history_bmu_id,
-                campaign_export_id
-            )
-            VALUES (%s, %s)
-            ON CONFLICT (history_bmu_id, campaign_export_id) DO NOTHING
-        """
+    assert result == [history_id]
+    assert cursor.execute.call_count == 2
 
-        history_ids = []
+    insert_call = cursor.execute.call_args_list[0]
+    insert_sql = insert_call.args[0]
+    insert_params = insert_call.args[1]
 
-        with self.connection.cursor() as cursor:
-            for record in valid_records:
-                values = tuple(record.values[key] for key in self.VALUE_KEYS)
+    assert "INSERT INTO history_bmu" in insert_sql
+    assert "ON CONFLICT (device_id, record_timestamp) DO NOTHING" in insert_sql
+    assert "RETURNING id" in insert_sql
 
-                cursor.execute(
-                    insert_sql,
-                    (
-                        device_id,
-                        record.timestamp,
-                        *values,
-                    ),
-                )
+    assert insert_params == (
+        device_id,
+        record.timestamp,
+        *get_record_values(record),
+    )
 
-                result = cursor.fetchone()
+    association_call = cursor.execute.call_args_list[1]
+    association_sql = association_call.args[0]
+    association_params = association_call.args[1]
 
-                if result is not None:
-                    history_id = result[0]
+    assert "INSERT INTO history_bmu_export" in association_sql
+    assert "ON CONFLICT" in association_sql
+    assert association_params == (history_id, campaign_export_id)
 
-                else:
-                    cursor.execute(
-                        select_sql,
-                        (device_id, record.timestamp),
-                    )
+    connection.commit.assert_called_once()
 
-                    existing = cursor.fetchone()
 
-                    if existing is None:
-                        raise RuntimeError(
-                            "BMU history measurement conflicted during "
-                            "insertion but could not be retrieved "
-                            f"(device_id={device_id}, "
-                            f"timestamp={record.timestamp!s})"
-                        )
+def test_create_many_reuses_existing_identical_measurement():
+    """An identical measurement is reused instead of duplicated."""
+    repository, connection, cursor = make_repository()
 
-                    history_id = existing[0]
-                    stored_values = tuple(existing[1:])
+    record = make_history()
+    device_id = 10
+    campaign_export_id = 30
+    history_id = 100
 
-                    if stored_values != values:
-                        logger.warning(
-                            "Conflicting BMU history values for "
-                            "device_id=%s at timestamp=%s "
-                            "(existing history_id=%s). "
-                            "Keeping the existing measurement.",
-                            device_id,
-                            record.timestamp,
-                            history_id,
-                        )
+    cursor.fetchone.side_effect = [
+        None,
+        make_existing_row(history_id, record),
+    ]
 
-                cursor.execute(
-                    association_sql,
-                    (history_id, campaign_export_id),
-                )
+    result = repository.create_many(
+        device_id=device_id,
+        campaign_export_id=campaign_export_id,
+        records=[record],
+    )
 
-                history_ids.append(history_id)
+    assert result == [history_id]
+    assert cursor.execute.call_count == 3
 
-        self.connection.commit()
+    select_call = cursor.execute.call_args_list[1]
+    select_sql = select_call.args[0]
+    select_params = select_call.args[1]
 
-        return history_ids
+    assert "SELECT id" in select_sql
+    assert "FROM history_bmu" in select_sql
+    assert "WHERE device_id = %s" in select_sql
+    assert "record_timestamp = %s" in select_sql
+    assert select_params == (device_id, record.timestamp)
+
+    association_call = cursor.execute.call_args_list[2]
+    assert association_call.args[1] == (
+        history_id,
+        campaign_export_id,
+    )
+
+    connection.commit.assert_called_once()
+
+
+def test_create_many_keeps_existing_values_on_conflict(caplog):
+    """Conflicting values do not overwrite an existing measurement."""
+    repository, connection, cursor = make_repository()
+
+    device_id = 10
+    campaign_export_id = 30
+    history_id = 100
+
+    existing_record = make_history()
+    conflicting_record = make_history(module_voltage=53000)
+
+    cursor.fetchone.side_effect = [
+        None,
+        make_existing_row(history_id, existing_record),
+    ]
+
+    with caplog.at_level(logging.WARNING):
+        result = repository.create_many(
+            device_id=device_id,
+            campaign_export_id=campaign_export_id,
+            records=[conflicting_record],
+        )
+
+    assert result == [history_id]
+    assert "Conflicting BMU history values" in caplog.text
+    assert "Keeping the existing measurement" in caplog.text
+
+    executed_sql = [call.args[0] for call in cursor.execute.call_args_list]
+
+    assert len(executed_sql) == 3
+    assert all("UPDATE history_bmu" not in sql for sql in executed_sql)
+
+    association_call = cursor.execute.call_args_list[2]
+    assert association_call.args[1] == (
+        history_id,
+        campaign_export_id,
+    )
+
+    connection.commit.assert_called_once()
+
+
+def test_create_many_skips_records_without_timestamp(caplog):
+    """Records without timestamps are skipped."""
+    repository, connection, cursor = make_repository()
+
+    record = make_history()
+    record.timestamp = None
+
+    with caplog.at_level(logging.WARNING):
+        result = repository.create_many(
+            device_id=10,
+            campaign_export_id=20,
+            records=[record],
+        )
+
+    assert result == []
+    assert "Skipping BMU history record without a timestamp" in caplog.text
+
+    connection.cursor.assert_not_called()
+    cursor.execute.assert_not_called()
+    connection.commit.assert_not_called()
+
+
+def test_create_many_with_empty_list_does_nothing():
+    """An empty input list does not access the database."""
+    repository, connection, cursor = make_repository()
+
+    result = repository.create_many(
+        device_id=10,
+        campaign_export_id=20,
+        records=[],
+    )
+
+    assert result == []
+
+    connection.cursor.assert_not_called()
+    cursor.execute.assert_not_called()
+    connection.commit.assert_not_called()
