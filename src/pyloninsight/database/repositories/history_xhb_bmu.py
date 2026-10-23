@@ -159,6 +159,5 @@ class HistoryXHBBMURepository:
 
                 history_ids.append(history_id)
 
-        self.connection.commit()
 
         return history_ids

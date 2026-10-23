@@ -93,7 +93,6 @@ class EventXHBMURepository:
             cursor.execute(query, parameters)
             event_ids = [row[0] for row in cursor.fetchall()]
 
-        self.connection.commit()
 
         return event_ids
 

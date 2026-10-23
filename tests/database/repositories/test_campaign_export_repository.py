@@ -56,7 +56,6 @@ def test_create_campaign_export():
         ),
     )
 
-    connection.commit.assert_called_once_with()
 
 
 def test_get_campaign_export_by_id():

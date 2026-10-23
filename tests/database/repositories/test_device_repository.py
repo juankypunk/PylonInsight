@@ -49,7 +49,6 @@ def test_create_device():
         ),
     )
 
-    connection.commit.assert_called_once_with()
 
 
 def test_get_device_by_barcode():

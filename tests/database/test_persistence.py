@@ -359,3 +359,36 @@ def test_save_persists_xhb_bmu_history(persistence):
 
     persistence.history_bms_repository.create_many.assert_not_called()
     persistence.history_bmu_repository.create_many.assert_not_called()
+
+
+def test_save_uses_transaction(persistence, campaign):
+    persistence.campaign_repository.create.return_value = 42
+    persistence.device_repository.get_id_by_barcode.return_value = 7
+    persistence.export_repository.create.return_value = 101
+
+    campaign_id = persistence.save(campaign)
+
+    assert campaign_id == 42
+    persistence.connection.transaction.assert_called_once_with()
+
+
+def test_save_propagates_error_when_persistence_fails(persistence, campaign):
+    persistence.campaign_repository.create.return_value = 42
+    persistence.device_repository.get_id_by_barcode.return_value = 7
+    persistence.export_repository.create.side_effect = RuntimeError(
+        "Simulated database error"
+    )
+
+    transaction = persistence.connection.transaction.return_value
+    transaction.__exit__.return_value = False
+
+    with pytest.raises(RuntimeError, match="Simulated database error"):
+        persistence.save(campaign)
+
+    # The campaign was created before the export insertion failed.
+    persistence.campaign_repository.create.assert_called_once_with(campaign)
+
+    # The transaction context receives the exception.
+    transaction.__exit__.assert_called_once()
+    exception_type = transaction.__exit__.call_args.args[0]
+    assert exception_type is RuntimeError

@@ -85,7 +85,6 @@ def test_create_many_bmu_events():
     ]
 
     assert kwargs == {}
-    connection.commit.assert_called_once()
 
 
 def test_create_many_bmu_events_with_empty_list():
@@ -100,7 +99,6 @@ def test_create_many_bmu_events_with_empty_list():
 
     assert event_ids == []
     connection.cursor.assert_not_called()
-    connection.commit.assert_not_called()
 
 
 def test_get_bmu_event_by_id():

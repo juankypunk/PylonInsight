@@ -62,70 +62,68 @@ class CampaignPersistence:
 
     def save(self, campaign: Campaign) -> int:
         """Persist a campaign and return its database ID."""
-        campaign_id = self.campaign_repository.create(campaign)
+        with self.connection.transaction():
+            campaign_id = self.campaign_repository.create(campaign)
 
-        for export in campaign.exports:
-            device = export.device
-
-            if device is None:
-                logger.warning(
-                    "Skipping export %s in campaign %s: no device metadata",
-                    export.role,
-                    campaign.name,
-                )
-                continue
-
-            if not device.barcode:
-                logger.warning(
-                    "Skipping export %s in campaign %s: " "device has no barcode",
-                    export.role,
-                    campaign.name,
-                )
-                continue
-
-            device_id = self.device_repository.get_id_by_barcode(device.barcode)
-
-            if device_id is None:
-                device_id = self.device_repository.create(device)
-
-            export_id = self.export_repository.create(
-                campaign_id=campaign_id,
-                device_id=device_id,
-                campaign_export=export,
-            )
-
-            if export.snapshot is not None:
-                self.snapshot_repository.create(
-                    campaign_export_id=export_id,
-                    snapshot=export.snapshot,
-                )
-
-            if export.history:
-                if device.model == "CMU_A":
-                    self.history_bms_repository.create_many(
-                        device_id=device_id,
-                        campaign_export_id=export_id,
-                        records=export.history,
+            for export in campaign.exports:
+                device = export.device
+                if device is None:
+                    logger.warning(
+                        "Skipping export %s in campaign %s: no device metadata",
+                        export.role,
+                        campaign.name,
                     )
-                elif device.model == "bmu":
-                    self.history_bmu_repository.create_many(
-                        device_id=device_id,
-                        campaign_export_id=export_id,
-                        records=export.history,
+                    continue
+
+                if not device.barcode:
+                    logger.warning(
+                        "Skipping export %s in campaign %s: device has no barcode",
+                        export.role,
+                        campaign.name,
                     )
-                elif device.model == "XHB_BMU_NT":
-                    self.history_xhb_bmu_repository.create_many(
-                        device_id=device_id,
+                    continue
+
+                device_id = self.device_repository.get_id_by_barcode(device.barcode)
+                if device_id is None:
+                    device_id = self.device_repository.create(device)
+
+                export_id = self.export_repository.create(
+                    campaign_id=campaign_id,
+                    device_id=device_id,
+                    campaign_export=export,
+                )
+
+                if export.snapshot is not None:
+                    self.snapshot_repository.create(
                         campaign_export_id=export_id,
-                        records=export.history,
+                        snapshot=export.snapshot,
                     )
 
-            event_repository = self.event_repositories.get(device.model)
+                if export.history:
+                    if device.model == "CMU_A":
+                        self.history_bms_repository.create_many(
+                            device_id=device_id,
+                            campaign_export_id=export_id,
+                            records=export.history,
+                        )
+                    elif device.model == "bmu":
+                        self.history_bmu_repository.create_many(
+                            device_id=device_id,
+                            campaign_export_id=export_id,
+                            records=export.history,
+                        )
+                    elif device.model == "XHB_BMU_NT":
+                        self.history_xhb_bmu_repository.create_many(
+                            device_id=device_id,
+                            campaign_export_id=export_id,
+                            records=export.history,
+                        )
 
-            if event_repository is not None and export.events:
-                event_repository.create_many(
-                    campaign_export_id=export_id,
-                    events=export.events,
-                )
+                event_repository = self.event_repositories.get(device.model)
+                if event_repository is not None and export.events:
+                    event_repository.create_many(
+                        campaign_export_id=export_id,
+                        events=export.events,
+                    )
 
         return campaign_id

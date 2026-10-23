@@ -41,7 +41,6 @@ def test_create_campaign_uses_database_default_for_created_at():
         ),
     )
 
-    connection.commit.assert_called_once_with()
 
 
 def test_create_campaign_uses_explicit_created_at():
@@ -85,7 +84,6 @@ def test_create_campaign_uses_explicit_created_at():
         ),
     )
 
-    connection.commit.assert_called_once_with()
 
 
 def test_get_campaign_by_id():

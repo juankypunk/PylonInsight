@@ -51,7 +51,6 @@ class CampaignRepository:
             cursor.execute(query, params)
             campaign_id = cursor.fetchone()[0]
 
-        self.connection.commit()
 
         return campaign_id
 

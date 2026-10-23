@@ -40,7 +40,6 @@ class DeviceRepository:
 
             device_id = cursor.fetchone()[0]
 
-        self.connection.commit()
 
         return device_id
 

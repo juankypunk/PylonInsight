@@ -82,7 +82,6 @@ class DeviceSnapshotRepository:
 
             snapshot_id = cursor.fetchone()[0]
 
-        self.connection.commit()
 
         return snapshot_id
 

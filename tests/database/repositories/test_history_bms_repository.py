@@ -114,7 +114,6 @@ def test_create_many_inserts_new_measurement_and_association():
     assert "ON CONFLICT" in association_sql
     assert association_params == (history_id, campaign_export_id)
 
-    connection.commit.assert_called_once()
 
 
 def test_create_many_reuses_existing_identical_measurement():
@@ -158,7 +157,6 @@ def test_create_many_reuses_existing_identical_measurement():
         campaign_export_id,
     )
 
-    connection.commit.assert_called_once()
 
 
 def test_create_many_keeps_existing_values_on_conflict(caplog):
@@ -205,7 +203,6 @@ def test_create_many_keeps_existing_values_on_conflict(caplog):
         campaign_export_id,
     )
 
-    connection.commit.assert_called_once()
 
 
 def test_create_many_skips_records_without_timestamp(caplog):
@@ -228,7 +225,6 @@ def test_create_many_skips_records_without_timestamp(caplog):
 
     connection.cursor.assert_not_called()
     cursor.execute.assert_not_called()
-    connection.commit.assert_not_called()
 
 
 def test_create_many_with_empty_list_does_nothing():
@@ -245,4 +241,3 @@ def test_create_many_with_empty_list_does_nothing():
 
     connection.cursor.assert_not_called()
     cursor.execute.assert_not_called()
-    connection.commit.assert_not_called()

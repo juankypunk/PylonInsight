@@ -47,7 +47,6 @@ class CampaignExportRepository:
 
             export_id = cursor.fetchone()[0]
 
-        self.connection.commit()
 
         return export_id
 
