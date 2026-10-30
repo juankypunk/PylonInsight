@@ -5,6 +5,10 @@ from dataclasses import dataclass
 
 import psycopg
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 class DatabaseConfigurationError(ValueError):
     """Raised when the PostgreSQL configuration is incomplete or invalid."""
