@@ -44,12 +44,12 @@ Data Items      :     2047
 """,
     )
 
-    device, snapshot = parse_detailed(path)
+    device, snapshot = parse_detailed(path, "BMU")
 
     assert device.barcode == "P224009002250028"
     assert device.manufacturer == "Pylon"
     assert device.model == "bmu"
-
+    assert device.device_type == "BMU"
     assert snapshot.board_version == "HP0115SV10R01"
     assert snapshot.hardware_version is None
     assert snapshot.soft_version == "V3.2"
@@ -102,12 +102,12 @@ Data Items      :      182
 """,
     )
 
-    device, snapshot = parse_detailed(path)
+    device, snapshot = parse_detailed(path, "BMU")
 
     assert device.barcode == "Y251113600040138"
     assert device.manufacturer == "Pylon"
     assert device.model == "XHB_BMU_NT"
-
+    assert device.device_type == "BMU"
     assert snapshot.board_version == "V30R02C002"
     assert snapshot.soft_version == "V1.2"
     assert snapshot.boot_version == "V1.0"
@@ -165,12 +165,12 @@ EvenData Items      : 384
 """,
     )
 
-    device, snapshot = parse_detailed(path)
+    device, snapshot = parse_detailed(path, "BMS")
 
     assert device.barcode == "H220829100140097"
     assert device.manufacturer == "Pylon"
     assert device.model == "CMU_A"
-
+    assert device.device_type == "BMS"
     assert snapshot.board_version == "TISP01V10R02_1"
     assert snapshot.hardware_version == "V10R9C5"
     assert snapshot.soft_version == "V5.7"

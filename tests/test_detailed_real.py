@@ -14,8 +14,8 @@ def detailed_file(role: str) -> Path:
 
 
 def test_parse_real_bms() -> None:
-    device, snapshot = parse_detailed(detailed_file("BMS"))
-
+    device, snapshot = parse_detailed(detailed_file("BMS"), "BMS")
+    assert device.device_type == "BMS"
     assert device.barcode == "H220829100140097"
     assert device.manufacturer == "Pylon"
     assert device.model == "CMU_A"
@@ -36,11 +36,12 @@ def test_parse_real_bms() -> None:
 
 
 def test_parse_real_legacy_bmu() -> None:
-    device, snapshot = parse_detailed(detailed_file("BMU1"))
+    device, snapshot = parse_detailed(detailed_file("BMU1"), "BMU")
 
     assert device.barcode == "P224009002250028"
     assert device.manufacturer == "Pylon"
     assert device.model == "bmu"
+    assert device.device_type == "BMU"
 
     assert snapshot.board_version == "HP0115SV10R01"
     assert snapshot.soft_version == "V3.2"
@@ -57,11 +58,12 @@ def test_parse_real_legacy_bmu() -> None:
 
 
 def test_parse_real_xhb_bmu() -> None:
-    device, snapshot = parse_detailed(detailed_file("BMU2"))
+    device, snapshot = parse_detailed(detailed_file("BMU2"), "BMU")
 
     assert device.barcode == "Y251113600040138"
     assert device.manufacturer == "Pylon"
     assert device.model == "XHB_BMU_NT"
+    assert device.device_type == "BMU"
 
     assert snapshot.board_version == "V30R02C002"
     assert snapshot.soft_version == "V1.2"

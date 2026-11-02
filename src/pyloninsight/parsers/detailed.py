@@ -19,7 +19,7 @@ _SNAPSHOT_FIELDS = {
 }
 
 
-def parse_detailed(path: Path) -> tuple[Device, DeviceSnapshot]:
+def parse_detailed(path: Path, device_type: str) -> tuple[Device, DeviceSnapshot]:
     """
     Parse a BatteryView detailed.txt file.
 
@@ -55,6 +55,7 @@ def parse_detailed(path: Path) -> tuple[Device, DeviceSnapshot]:
 
     device = Device(
         barcode=metadata.get("module_barcode", ""),
+        device_type=device_type,
         manufacturer=metadata.get("manufacturer"),
         model=device_name,
     )

@@ -63,7 +63,14 @@ def _load_export_metadata(export: CampaignExport) -> None:
     if detailed is None:
         return
 
-    device, snapshot = parse_detailed(detailed)
+    if export.role.upper() == "BMS":
+        device_type = "BMS"
+    elif export.role.upper().startswith(("BMU", "BATT")):
+        device_type = "BMU"
+    else:
+        raise ValueError(f"Unknown export role: {export.role}")
+
+    device, snapshot = parse_detailed(detailed, device_type)
 
     export.device = device
     export.snapshot = snapshot
