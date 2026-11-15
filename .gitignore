@@ -19,6 +19,7 @@ coverage.xml
 .ruff_cache/
 .tox/
 .nox/
+tests/data/
 
 # Build and packaging artifacts
 build/
